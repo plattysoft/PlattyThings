@@ -1,1 +1,1 @@
-include ':ssd1306_sample', ':ssd1306'
+include ':ssd1306_sample', ':ssd1306', ':adxl345_test', ':hmc5883l_test', ':pcf8591', ':pcf8591_sample', ':ledmatrix_test'
