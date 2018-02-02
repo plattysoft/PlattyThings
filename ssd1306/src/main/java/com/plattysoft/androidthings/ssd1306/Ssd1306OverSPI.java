@@ -244,8 +244,12 @@ class Ssd1306OverSPI extends Ssd1306 implements Closeable {
         }
     }
 
-    public void show() throws IOException {
-        showUsingHorizAddrMode();
+    public void show() {
+        try {
+            showUsingHorizAddrMode();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 //        showUsingPageAddrMode();
     }
 
