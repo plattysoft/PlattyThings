@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Dave McKelvie
+ * Copyright 2018 Raul Portales
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,15 @@ import com.google.android.things.pio.I2cDevice;
 import com.google.android.things.pio.PeripheralManager;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
- * Android Things driver for the PCF8591 Analog to Digital Converter
- * http://www.nxp.com/documents/data_sheet/PCF8591.pdf
+ * Android Things driver for the Pcf8575 GPIO extension board
+ * by Raul Portales
  */
 public class Pcf8575 implements AutoCloseable {
 
@@ -37,10 +40,41 @@ public class Pcf8575 implements AutoCloseable {
      */
     private static final int BASE_ADDRESS = 0x20;
 
-    private final Gpio mInterruptGpio;
-    private final I2cDevice mI2cDevice;
-    private final HashSet<Pcf8575Gpio> mRegisteredPins = new HashSet<>();
+    /**
+     * Names of the GPIO pins provided by the component
+     */
+    private final String [] mPinNames = {
+            "P00", "P01", "P02", "P03", "P04", "P05", "P06", "P07",
+            "P10", "P11", "P12", "P13", "P14", "P15", "P16", "P17"
+    };
 
+    /**
+     * Gpio of the Android Things board that is connected to the interrupt signal
+     */
+    private Gpio mInterruptGpio;
+    /**
+     * Reference to the I2C device
+     */
+    private final I2cDevice mI2cDevice;
+    /**
+     * Map of GPIO objects based on their name, to be initialized on construction
+     */
+    private final Map<String, Pcf8575Gpio> mGpios = new HashMap<>();
+    /**
+     * Set of Gpio pins that are registered for Gpio callbacks.
+     * They will be notified whenever the interrupt GPIO changes
+     */
+    private final Set<Pcf8575Gpio> mRegisteredPins = new HashSet<>();
+
+    /**
+     * Latest value of the GPIO writes. It is used to write the same value on all the pins that are
+     * not the one we want to modify
+     */
+    protected byte[] mCurrentGpioValues = new byte[] {0x00, 0x00};
+
+    /**
+     * GPIO callback for the interrupt that iterates over the registered GPIO objects
+     */
     private final GpioCallback mCallback = new GpioCallback() {
         @Override
         public boolean onGpioEdge(Gpio gpio) {
@@ -60,64 +94,75 @@ public class Pcf8575 implements AutoCloseable {
         }
     };
 
-    protected byte[] mCurrentGpio = new byte[] {0x00, 0x00};
+    protected Pcf8575(I2cDevice i2cDevice) {
+        mI2cDevice = i2cDevice;
 
-    protected Pcf8575(Gpio interruptGpio, I2cDevice i2cDevice) throws IOException {
-        mInterruptGpio = interruptGpio;
+        for (int i = 0; i< mPinNames.length; i++) {
+            mGpios.put(mPinNames[i], new Pcf8575Gpio(mPinNames[i], i, this));
+        }
+    }
+
+    /**
+     * Configures interrupt pin. Calling this method is mandatory to receive GPIO callbacks
+     * @param interruptPin The name of the Android Things connected board
+     * @throws IOException
+     */
+    public void setInterrupt(String interruptPin) throws IOException {
+        PeripheralManager peripheralManager = PeripheralManager.getInstance();
+        mInterruptGpio = peripheralManager.openGpio(interruptPin);
         mInterruptGpio.setDirection(Gpio.DIRECTION_IN);
         mInterruptGpio.setActiveType(Gpio.ACTIVE_LOW);
         mInterruptGpio.setEdgeTriggerType(Gpio.EDGE_BOTH);
         mInterruptGpio.registerGpioCallback(mCallback);
-        mI2cDevice = i2cDevice;
     }
 
     /**
-     * Create a Pcf8591 with the default address on the
+     * Create a Pcf8575 with the default address on the
      * default I2C bus.
      *
-     * @return new Pcf8591
+     * @return new Pcf8575
      */
-    public static Pcf8575 open(String interruptPin) throws IOException {
-        return open(interruptPin, 0, getBus());
+    public static Pcf8575 open() throws IOException {
+        return open(0, getBus());
     }
 
     /**
-     * Create a Pcf8591 with the given bus on the
+     * Create a Pcf8575 with the given bus on the
      * default address.
      *
      * @param bus     the I2C bus the mI2cDevice is on
-     * @return new Pcf8591
+     * @return new Pcf8575
      */
-    public static Pcf8575 open(String interruptPin, String bus) throws IOException {
-        return open(interruptPin, 0, bus);
+    public static Pcf8575 open(String bus) throws IOException {
+        return open(0, bus);
     }
 
     /**
-     * Create a Pcf8591 with the given address on the
+     * Create a Pcf8575 with the given address on the
      * default I2C bus.
      *
-     * @param address value of A0-A2 for your Pcf8591
-     * @return new Pcf8591
+     * @param address value of A0-A2 for your Pcf8575
+     * @return new Pcf8575
      */
-    public static Pcf8575 open(String interruptPin, int address) throws IOException {
-        return open(interruptPin, address, getBus());
+    public static Pcf8575 open(int address) throws IOException {
+        return open(address, getBus());
     }
 
     /**
-     * Create a Pcf8591 with the given address on the
+     * Create a Pcf8575 with the given address on the
      * given bus.
      *
-     * @param address value of A0-A2 for your Pcf8591
-     * @param bus     the I2C bus the mI2cDevice is on
-     * @return new Pcf8591
+     * @param address value of A0-A2 for your Pcf8575
+     * @param bus     the I2C bus the I2cDevice is on
+     * @return new Pcf8575
      */
-    public static Pcf8575 open(String interruptPin, int address, String bus) throws IOException {
+    public static Pcf8575 open(int address, String bus) throws IOException {
         int fullAddress = BASE_ADDRESS + address;
 
         PeripheralManager peripheralManager = PeripheralManager.getInstance();
         I2cDevice i2cDevice = peripheralManager.openI2cDevice(bus, fullAddress);
-        Gpio interruptGpio = peripheralManager.openGpio(interruptPin);
-        return new Pcf8575(interruptGpio, i2cDevice);
+
+        return new Pcf8575(i2cDevice);
     }
 
     protected static String getBus() {
@@ -140,11 +185,22 @@ public class Pcf8575 implements AutoCloseable {
         }
     }
 
-    public Gpio openGpio(String gpio) {
+    /**
+     * Opens one of the GPIO ports by name
+     * @param pinName The name of the GPIO pin (P00-P07, P10-P17)
+     * @return A GPIO object that can be used to handle that pin
+     */
+    public Gpio openGpio(String pinName) {
         // Make a GPIO and handle it
-        return new Pcf8575Gpio(this, gpio);
+        return mGpios.get(pinName);
     }
 
+    /**
+     * Reads the value of a GPIO by position, provided for completion
+     * @param gpio the index of the GPIO to be read (0-15)
+     * @return if the value is HIGH (true) or LOW (false)
+     * @throws IOException
+     */
     public boolean getValue(int gpio) throws IOException {
         // Ask for a read, return the requested value
         byte[] buffer = new byte[2];
@@ -162,6 +218,12 @@ public class Pcf8575 implements AutoCloseable {
         return (buffer[targetGpioBlock] & command) == command;
     }
 
+    /**
+     *  Writes a value to one pin by position. The other pins stay the same
+     * @param gpio the index of the GPIO to be written
+     * @param value if it is to be set to HIGH (true) or LOW (false)
+     * @throws IOException
+     */
     public void setValue(int gpio, boolean value) throws IOException {
         int shiftAmount = gpio;
         int targetGpioBlock = 0;
@@ -174,19 +236,19 @@ public class Pcf8575 implements AutoCloseable {
         }
         byte command = (byte) (0x01<<shiftAmount);
         if (value) {
-            mCurrentGpio[targetGpioBlock] = (byte) (mCurrentGpio[targetGpioBlock] | command);
+            mCurrentGpioValues[targetGpioBlock] = (byte) (mCurrentGpioValues[targetGpioBlock] | command);
         }
         else {
-            mCurrentGpio[targetGpioBlock] = (byte) (mCurrentGpio[targetGpioBlock] & ~command);
+            mCurrentGpioValues[targetGpioBlock] = (byte) (mCurrentGpioValues[targetGpioBlock] & ~command);
         }
-        mI2cDevice.write(mCurrentGpio, 2);
+        mI2cDevice.write(mCurrentGpioValues, 2);
     }
 
-    public void unregisterGpioCallback(Pcf8575Gpio pcf8575Gpio) {
+    void unregisterGpioCallback(Pcf8575Gpio pcf8575Gpio) {
         mRegisteredPins.remove(pcf8575Gpio);
     }
 
-    public void registerGpioCallback(Pcf8575Gpio pcf8575Gpio) {
+    void registerGpioCallback(Pcf8575Gpio pcf8575Gpio) {
         mRegisteredPins.add(pcf8575Gpio);
     }
 }

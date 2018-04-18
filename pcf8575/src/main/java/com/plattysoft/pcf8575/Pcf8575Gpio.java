@@ -18,23 +18,18 @@ public class Pcf8575Gpio implements Gpio {
     private final Pcf8575 mController;
     private final List<GpioCallback> mCallbacks = new ArrayList<>();
     private final int mGpioIndex;
+    private final String mPinName;
     private boolean mActiveHigh = true;
-    private boolean mPreviousValue;
 
-    public Pcf8575Gpio(Pcf8575 controller, String gpio) {
+    public Pcf8575Gpio(String name, int index, Pcf8575 controller) {
         mController = controller;
-        mGpioIndex = convertToInt(gpio);
+        mGpioIndex = index;
+        mPinName = name;
     }
 
-    private int convertToInt(String gpio) {
-        // From P00 tp P07 (0-7) and P10 to P17 (8-15)
-        if (gpio.startsWith("P0")) {
-            return Integer.valueOf(gpio.charAt(2))-48;
-        }
-        else if (gpio.startsWith("P1")) {
-            return Integer.valueOf(gpio.charAt(2))-48+8;
-        }
-        throw new InvalidParameterException("Not a valid GPIO name");
+    @Override
+    public String getName() {
+        return mPinName;
     }
 
     @Override
@@ -82,7 +77,13 @@ public class Pcf8575Gpio implements Gpio {
 
     @Override
     public boolean getValue() throws IOException {
-        return mController.getValue(mGpioIndex);
+        boolean state = mController.getValue(mGpioIndex);
+        if (mActiveHigh) {
+            return state;
+        }
+        else {
+            return !state;
+        }
     }
 
     @Override
@@ -107,7 +108,7 @@ public class Pcf8575Gpio implements Gpio {
     }
 
     public void validateInterrupt() throws IOException {
-        // TODO: Maybe implement some debouncing
+        // TODO: Maybe implement some debouncing or filtering
         for (GpioCallback callback : mCallbacks) {
             callback.onGpioEdge(this);
         }
