@@ -1,10 +1,10 @@
-This is a driver for the PCF8575 GPIO Extension board
+# PCF8575 GPIO Extension board
+
+This is a driver for the PCF8575 GPIO Extension board (16 pins). It is compatible with Android Things DP 8
 
 ![Image of PCB8575](https://github.com/plattysoft/PlattyThings/blob/master/pcf8575/PCF8575.jpg)
 
-This driver is compatible with Android Things DP 8
-
-# Gradle configuration
+## Gradle configuration
 
 Pending to update to Jcenter, so for now you need to add a custom repository
 
@@ -25,7 +25,7 @@ dependencies {
 }
 ```
 
-# Usage
+## Usage
 
 You can open the driver providing bus and address or use the defaults (if you have not touched the A0-A2 pins)
 
