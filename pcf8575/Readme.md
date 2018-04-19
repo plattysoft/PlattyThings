@@ -1,5 +1,8 @@
 This is a driver for the PCF8575 GPIO Extension board
 
+![Image of PCB8575]
+(https://github.com/plattysoft/PlattyThings/tree/master/pcf8575/PCF8575.jpg)
+
 It is compatible with Android Things DP 8
 
 # Gradle configuration
