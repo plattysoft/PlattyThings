@@ -1,6 +1,6 @@
 # PCF8575 GPIO Extension board
 
-This is an Android Things driver for the PCF8575 GPIO Extension board (16 pins). It is compatible with Android Things DP 8
+This is an Android Things driver for PCF8575 GPIO Extension board (16 pins). It is compatible with Android Things DP 8
 
 ![Image of PCB8575](https://github.com/plattysoft/PlattyThings/blob/master/pcf8575/PCF8575.jpg)
 
