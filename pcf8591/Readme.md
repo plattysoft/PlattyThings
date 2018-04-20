@@ -39,7 +39,7 @@ Once the driver is created, you can read the value from any analog input. Values
 // Reading the channel from AIN2
 val value = mPcf8591.readValue(2)
 // Reading the value from all channels
-val allValues = readAllValues()
+val allValues = mPcf8591.readAllValues()
 ```
 
 You can also write an analog value to the Analog output, but it does not seem to work properly, it is likely to be a fault on the board. 
