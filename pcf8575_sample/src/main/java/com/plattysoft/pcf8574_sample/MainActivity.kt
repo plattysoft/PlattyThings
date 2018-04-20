@@ -13,10 +13,11 @@ private val TAG = MainActivity::class.java.simpleName
 
 class MainActivity : Activity() {
 
-    private val mGpioBoard = Pcf8575.open("BCM23")
+    private val mGpioBoard = Pcf8575.open()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mGpioBoard.setInterrupt("BCM23")
         var current = 12
         var value = true
         val button = mGpioBoard.openGpio("P00")
