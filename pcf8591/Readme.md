@@ -2,7 +2,7 @@
 
 This is an Android Things driver for PCF8591 Analog to Digital Converter (4 inputs). It is compatible with Android Things DP 8
 
-![Image of PCF8591](https://github.com/plattysoft/PlattyThings/blob/master/pcf8591/PCF8591.jpg)
+![Image of PCF8591](https://github.com/plattysoft/PlattyThings/blob/master/pcf8591/pcf8591.jpg)
 
 ## Gradle configuration
 
