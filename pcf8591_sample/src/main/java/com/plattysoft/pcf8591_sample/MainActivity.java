@@ -6,11 +6,10 @@ import android.util.Log;
 
 import com.google.android.things.contrib.driver.apa102.Apa102;
 import com.google.android.things.contrib.driver.ht16k33.AlphanumericDisplay;
-import com.google.android.things.contrib.driver.ht16k33.Ht16k33;
 import com.google.android.things.contrib.driver.rainbowhat.RainbowHat;
 import com.google.android.things.pio.Gpio;
 import com.google.android.things.pio.GpioCallback;
-import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.PeripheralManager;
 import com.plattysoft.pcf8591.Pcf8591;
 
 import java.io.IOException;
@@ -42,7 +41,7 @@ public class MainActivity extends Activity {
     protected void onStart() {
         super.onStart();
 
-        PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
+        PeripheralManager peripheralManagerService = PeripheralManager.getInstance();
         try {
             mMotionSensor = peripheralManagerService.openGpio(MOTION_SENSOR_PORT);
             mMotionSensor.setDirection(Gpio.DIRECTION_IN);
@@ -65,9 +64,9 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-//        setupAlphanumericDisplay();
-//        setupAdc();
-//        setupLedStrip();
+        setupAlphanumericDisplay();
+        setupAdc();
+        setupLedStrip();
 //
         startTimer();
     }
@@ -105,7 +104,7 @@ public class MainActivity extends Activity {
                     e.printStackTrace();
                 }
 
-//                readAdcAndDisplayIt();
+                readAdcAndDisplayIt();
             }
         }, REFRESH_INTERVAL, REFRESH_INTERVAL);
     }
