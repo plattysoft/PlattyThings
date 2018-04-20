@@ -16,7 +16,7 @@
 package com.plattysoft.pcf8591;
 
 import com.google.android.things.pio.I2cDevice;
-import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.PeripheralManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -96,7 +96,7 @@ public class Pcf8591 implements AutoCloseable {
     public static Pcf8591 open(int address, String bus) throws IOException {
         int fullAddress = BASE_ADDRESS + address;
 
-        PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
+        PeripheralManager peripheralManagerService = PeripheralManager.getInstance();
         I2cDevice device = peripheralManagerService.openI2cDevice(bus, fullAddress);
 
         return new Pcf8591(device);
@@ -112,7 +112,7 @@ public class Pcf8591 implements AutoCloseable {
     }
 
     protected static String getBus() {
-        PeripheralManagerService peripheralManagerService = new PeripheralManagerService();
+        PeripheralManager peripheralManagerService = PeripheralManager.getInstance();
         List<String> deviceList = peripheralManagerService.getI2cBusList();
         if (deviceList.isEmpty()) {
             return "I2C1";

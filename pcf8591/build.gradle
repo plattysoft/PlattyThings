@@ -2,7 +2,7 @@ apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.1'
+def versionName = '0.8.1'
 
 android {
     compileSdkVersion 26
@@ -24,9 +24,9 @@ android {
     }
 }
 
-def siteUrl = 'https://github.com/plattysoft/IoTAnalogReader'
-def gitUrl = 'https://github.com/plattysoft/IoTAnalogReader.git'
-group = "com.plattysoft.pcf8591"
+def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/pcf8591'
+def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
+group = "com.plattysoft.things"
 version = versionName
 
 dependencies {
@@ -35,7 +35,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    provided 'com.google.android.things:androidthings:0.5.1-devpreview'
+    compileOnly 'com.google.android.things:androidthings:+'
 
     testCompile 'junit:junit:4.12'
 }
@@ -50,7 +50,7 @@ bintray {
 
     configurations = ['archives']
     pkg {
-        repo = "maven"
+        repo = "PlattyThings"
         name = "PCF8591"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
