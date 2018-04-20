@@ -1,4 +1,8 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.github.dcendents.android-maven'
+apply plugin: 'com.jfrog.bintray'
+
+def versionName = '0.8.1'
 
 android {
     compileSdkVersion 27
@@ -8,7 +12,6 @@ android {
         minSdkVersion 26
         targetSdkVersion 27
         versionCode 1
-        versionName "1.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -30,4 +33,92 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compileOnly 'com.google.android.things:androidthings:+'
 
+}
+
+def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/pcf8575'
+def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
+group = "com.plattysoft.things"
+version = versionName
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    provided 'com.google.android.things:androidthings:0.5.1-devpreview'
+
+    testCompile 'junit:junit:4.12'
+}
+
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    configurations = ['archives']
+    pkg {
+        repo = "PlattyThings"
+        name = "PCF8575"
+        websiteUrl = siteUrl
+        vcsUrl = gitUrl
+        licenses = ["Apache-2.0"]
+        dryRun = false
+        publish = true
+        version {
+            name = versionName //Bintray logical version name
+            vcsTag = versionName
+        }
+    }
+}
+
+install {
+    repositories.mavenInstaller {
+        // This generates POM.xml with proper parameters
+        pom {
+            project {
+                packaging 'aar'
+                artifactId 'pcf8575'
+                version = versionName
+                groupId = group
+                // Add your description here
+                name 'pcf8575'
+                description = 'GPIO Extension PCF8575 driver for Android Things'
+                url siteUrl
+
+                // Set your license
+                licenses {
+                    license {
+                        name 'The Apache Software License, Version 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+                developers {
+                    developer {
+                        id 'plattysoft'
+                        name 'Platty Soft'
+                        email 'raul@plattysoft.com'
+                    }
+                }
+                scm {
+                    connection gitUrl
+                    developerConnection gitUrl
+                    url siteUrl
+                }
+            }
+        }
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+    archiveName "pcf8575-${versionName}-sources.jar"
+}
+
+artifacts {
+    archives sourcesJar
 }
