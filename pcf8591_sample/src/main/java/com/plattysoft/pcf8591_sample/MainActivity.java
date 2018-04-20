@@ -35,40 +35,14 @@ public class MainActivity extends Activity {
     int[] mColors = new int[RainbowHat.LEDSTRIP_LENGTH];
     private Timer mTimer;
 
-    private static final String MOTION_SENSOR_PORT = "GPIO6_IO13";
-    private Gpio mMotionSensor;
-
     @Override
     protected void onStart() {
         super.onStart();
 
-        PeripheralManager peripheralManagerService = PeripheralManager.getInstance();
-        try {
-            mMotionSensor = peripheralManagerService.openGpio(MOTION_SENSOR_PORT);
-            mMotionSensor.setDirection(Gpio.DIRECTION_IN);
-            mMotionSensor.setEdgeTriggerType(Gpio.EDGE_BOTH);
-            mMotionSensor.registerGpioCallback(
-                    new GpioCallback() {
-                        @Override
-                        public boolean onGpioEdge(Gpio gpio) {
-                            try {
-                                Log.e("MOTION", gpio.getName()+": "+gpio.getValue());
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            return true;
-                        }
-                    }
-            );
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         setupAlphanumericDisplay();
         setupAdc();
         setupLedStrip();
-//
+
         startTimer();
     }
 
@@ -99,12 +73,6 @@ public class MainActivity extends Activity {
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
-                try {
-                    Log.e("MOTION", "value: "+mMotionSensor.getValue());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
                 readAdcAndDisplayIt();
             }
         }, REFRESH_INTERVAL, REFRESH_INTERVAL);
