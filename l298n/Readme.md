@@ -44,7 +44,7 @@ Once the driver is created, you set the mode of the 2 motors combined (left and 
 
 As an example:
 ```kotlin
-val led = mGpioBoard.setMode(MotorMode.SPIN_RIGHT)
+mGpioBoard.setMode(MotorMode.SPIN_RIGHT)
 ```
 
 
