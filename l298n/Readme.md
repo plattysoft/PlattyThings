@@ -44,7 +44,7 @@ Once the driver is created, you set the mode of the 2 motors combined (left and 
 
 As an example:
 ```kotlin
-mGpioBoard.setMode(MotorMode.SPIN_RIGHT)
+mL298n.setMode(MotorMode.SPIN_RIGHT)
 ```
 
 
