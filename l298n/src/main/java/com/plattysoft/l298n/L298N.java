@@ -1,7 +1,5 @@
 package com.plattysoft.l298n;
 
-import com.google.android.things.pio.PeripheralManagerService;
-
 import java.io.IOException;
 
 /**

@@ -1,7 +1,7 @@
 package com.plattysoft.l298n;
 
 import com.google.android.things.pio.Gpio;
-import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.PeripheralManager;
 
 import java.io.IOException;
 
@@ -14,7 +14,7 @@ class Motor implements AutoCloseable {
     private Gpio mGpioBackward;
 
     public Motor(String gpioForward, String gpioBackward) throws IOException {
-        PeripheralManagerService service = new PeripheralManagerService();
+        PeripheralManager service = PeripheralManager.getInstance();
 
         mGpioForward = service.openGpio(gpioForward);
         mGpioForward.setDirection(Gpio.DIRECTION_OUT_INITIALLY_LOW);
