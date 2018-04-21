@@ -30,7 +30,7 @@ dependencies {
 You can open the driver providing the GPIO names of the 4 pins used to control the motors
 
 ```kotlin
-private val mL298n = mL298n.open(pin1,pin2,pin3,pin4)
+private val mL298n = L298N.open(pin1,pin2,pin3,pin4)
 ```
 
 Once the driver is created, you set the mode of the 2 motors combined (left and right)
