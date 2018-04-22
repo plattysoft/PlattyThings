@@ -1,12 +1,10 @@
 package com.plattysoft.uln2003.driver
 
-import com.polidea.androidthings.driver.steppermotor.Direction
-import com.polidea.androidthings.driver.steppermotor.awaiter.Awaiter
-import com.polidea.androidthings.driver.steppermotor.awaiter.DefaultAwaiter
-import com.polidea.androidthings.driver.steppermotor.driver.StepDuration
-import com.polidea.androidthings.driver.steppermotor.driver.StepperMotorDriver
-import com.polidea.androidthings.driver.steppermotor.gpio.GpioFactory
-import com.polidea.androidthings.driver.steppermotor.gpio.StepperMotorGpio
+import com.plattysoft.uln2003.Direction
+import com.plattysoft.uln2003.awaiter.Awaiter
+import com.plattysoft.uln2003.awaiter.DefaultAwaiter
+import com.plattysoft.uln2003.gpio.GpioFactory
+import com.plattysoft.uln2003.gpio.StepperMotorGpio
 
 class ULN2003 internal constructor(private val in1GpioId: String,
                                    private val in2GpioId: String,

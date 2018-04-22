@@ -1,9 +1,9 @@
 package com.plattysoft.uln2003.motor
 
+import com.plattysoft.uln2003.Direction
 import com.plattysoft.uln2003.driver.ULN2003
 import com.plattysoft.uln2003.driver.ULN2003Resolution
-import com.polidea.androidthings.driver.steppermotor.Direction
-import com.polidea.androidthings.driver.steppermotor.motor.MotorRunner
+import com.plattysoft.uln2003.listener.motor.MotorRunner
 
 class ULN2003MotorRunner(val uln2003: ULN2003,
                          steps: Int,

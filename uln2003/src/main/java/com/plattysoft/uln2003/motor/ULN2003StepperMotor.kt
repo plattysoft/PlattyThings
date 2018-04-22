@@ -1,9 +1,8 @@
 package com.plattysoft.uln2003.motor
 
+import com.plattysoft.uln2003.Direction
 import com.plattysoft.uln2003.driver.ULN2003
 import com.plattysoft.uln2003.driver.ULN2003Resolution
-import com.polidea.androidthings.driver.steppermotor.Direction
-import com.polidea.androidthings.driver.steppermotor.motor.StepperMotor
 
 class ULN2003StepperMotor(in1GpioId: String,
                           in2GpioId: String,
