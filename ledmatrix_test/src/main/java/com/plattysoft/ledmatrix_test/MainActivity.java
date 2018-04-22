@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.PeripheralManager;
 import com.nilhcem.androidthings.driver.max72xx.LedControl;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        List<String> list = new PeripheralManagerService().getSpiBusList();
+        List<String> list = PeripheralManager.getInstance().getSpiBusList();
         for (String bus : list) {
             Log.d("Bus:", bus);
         }

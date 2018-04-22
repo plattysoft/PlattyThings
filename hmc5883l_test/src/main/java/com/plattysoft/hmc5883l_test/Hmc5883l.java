@@ -7,7 +7,6 @@ import android.support.annotation.IntDef;
 import android.util.Log;
 
 import com.google.android.things.pio.I2cDevice;
-import com.google.android.things.pio.PeripheralManagerService;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;

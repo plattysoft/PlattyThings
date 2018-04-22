@@ -21,11 +21,13 @@ package com.plattysoft.androidthings.ssd1306;
 import android.util.Log;
 
 import com.google.android.things.pio.Gpio;
-import com.google.android.things.pio.PeripheralManagerService;
+import com.google.android.things.pio.PeripheralManager;
 import com.google.android.things.pio.SpiDevice;
 
 import java.io.Closeable;
 import java.io.IOException;
+
+import static com.google.android.things.pio.SpiDevice.BIT_JUSTIFICATION_LSB_FIRST;
 
 /**
  * SSD1306 for Sparkfun OLED Block
@@ -148,18 +150,18 @@ class Ssd1306OverSPI extends Ssd1306 implements Closeable {
     }
 
     Ssd1306OverSPI(String spiName, String dcPin, String rstPin, int width, int height) throws IOException, InterruptedException {
-        mDc = new PeripheralManagerService().openGpio(dcPin);
-        mRst = new PeripheralManagerService().openGpio(rstPin);
+        mDc = PeripheralManager.getInstance().openGpio(dcPin);
+        mRst = PeripheralManager.getInstance().openGpio(rstPin);
         mLedWidth = width;
         mLedHeight = height;
         mBuffer = new byte[((mLedWidth * mLedHeight) / 8)];
 
-        mSpiDevice = new PeripheralManagerService().openSpiDevice(spiName);
+        mSpiDevice = PeripheralManager.getInstance().openSpiDevice(spiName);
 
         mSpiDevice.setMode(SpiDevice.MODE0);
         mSpiDevice.setFrequency(10000000);
         mSpiDevice.setBitsPerWord(8);
-        mSpiDevice.setBitJustification(false);
+        mSpiDevice.setBitJustification(BIT_JUSTIFICATION_LSB_FIRST); // TODO: Try it and commit
 
         mDc.setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
         mDc.setActiveType(Gpio.ACTIVE_LOW);
