@@ -1,4 +1,4 @@
-#DRiver for accelerometer ADXL345
+# Driver for accelerometer ADXL345
 
 Forked from: https://github.com/cagdasc/AndroidThings-ADXL345
 
@@ -26,7 +26,7 @@ dependencies {
 }
 ```
 
-# Sample usage:
+## Sample usage:
 
 ```kotlin
 val adxl345 = ADXL345(I2cUtils.getBus())
