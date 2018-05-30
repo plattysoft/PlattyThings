@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.1'
+def versionName = '1.0.2'
 
 android {
     compileSdkVersion 27
@@ -40,6 +40,8 @@ def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
 group = "com.plattysoft.things"
 version = versionName
 
+def groupPackageId = group
+
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
@@ -54,8 +56,8 @@ bintray {
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
-        dryRun = true
-        publish = false
+        dryRun = false
+        publish = true
         version {
             name = versionName //Bintray logical version name
             vcsTag = versionName
@@ -63,44 +65,45 @@ bintray {
     }
 }
 
-//bintrayUpload.dependsOn(assemble, sourcesJar, install)
-
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                artifactId 'adxl345'
-                version = versionName
-                groupId = group
-                // Add your description here
-                name 'ADXL345'
-                description = 'Accelerometer ADXL345 driver for Android Things'
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'plattysoft'
-                        name 'Platty Soft'
-                        email 'raul@plattysoft.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
+task createPom {
+    apply plugin: 'maven'
+    description "Generates pom.xml"
+    pom {
+        project {
+            packaging 'aar'
+            artifactId 'adxl345'
+            version = versionName
+            groupId = groupPackageId
+            name 'adxl345'.toUpperCase()
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                 }
             }
+            developers {
+                developer {
+                    id 'plattysoft'
+                    name 'Platty Soft'
+                    email 'raul@plattysoft.com'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
         }
-    }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+
+        configurations.compile.allDependencies.each { dependency ->
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dependency.group)
+            dependencyNode.appendNode('artifactId', dependency.name)
+            dependencyNode.appendNode('version', dependency.version)
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml")
 }
 
 task sourcesJar(type: Jar) {
@@ -109,13 +112,12 @@ task sourcesJar(type: Jar) {
     archiveName "adxl345-${versionName}-sources.jar"
 }
 
-task classesJar(type: Jar) {
-    //from android.sourceSets.main.java
-    from 'build/intermediates/classes/release/'
-    archiveName "adxl345-${versionName}.jar"
-}
-
 artifacts {
     archives sourcesJar
-    archives classesJar
 }
+
+repositories {
+    mavenCentral()
+}
+
+bintrayUpload.dependsOn(assemble, sourcesJar, createPom)

@@ -1,9 +1,10 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
-apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
+apply plugin: 'com.github.dcendents.android-maven'
 
-def versionName = '0.8'
+def versionName = '0.8.2'
+def groupPackageId = "com.plattysoft.things"
 
 android {
     compileSdkVersion 27
@@ -27,7 +28,7 @@ android {
 def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/pcf8591'
 def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
 def artifact = "pcf8591"
-def group = "com.plattysoft.things"
+group = groupPackageId
 version = versionName
 
 dependencies {
@@ -53,15 +54,13 @@ task sourcesJar(type: Jar) {
 }
 
 bintray {
-
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
 
-//    publications = ['Production']
     configurations = ['archives']
     pkg {
         repo = "PlattyThings"
-        name = artifact
+        name = artifact.toUpperCase()
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -74,53 +73,34 @@ bintray {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                artifactId artifact
-                version = versionName
-                groupId = group
-                // Add your description here
-                name artifact
-                description = 'ADC PCF8591 driver for Android Things'
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'plattysoft'
-                        name 'Platty Soft'
-                        email 'raul@plattysoft.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
-                }
-            }
-        }
-    }
-}
-
 task createPom {
     apply plugin: 'maven'
     description "Generates pom.xml"
     pom {
         project {
-            groupId group
-            artifactId artifact
-            version versionName
             packaging 'aar'
+            artifactId artifact
+            version = versionName
+            groupId = groupPackageId
+            name artifact.toUpperCase()
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                }
+            }
+            developers {
+                developer {
+                    id 'plattysoft'
+                    name 'Platty Soft'
+                    email 'raul@plattysoft.com'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
         }
     }.withXml {
         def dependenciesNode = asNode().appendNode('dependencies')
@@ -131,7 +111,7 @@ task createPom {
             dependencyNode.appendNode('artifactId', dependency.name)
             dependencyNode.appendNode('version', dependency.version)
         }
-    }.writeTo("$buildDir/poms/pcf8591-${versionName}.pom")
+    }.writeTo("$buildDir/poms/pom-default.xml")
 }
 
 artifacts {
