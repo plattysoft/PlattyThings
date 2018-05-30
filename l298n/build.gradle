@@ -75,7 +75,7 @@ install {
                 version = versionName
                 groupId = group
                 // Add your description here
-                name 'pcf8575'
+                name 'l298n'
                 description = 'GPIO Extension PCF8575 driver for Android Things'
                 url siteUrl
 
@@ -106,7 +106,7 @@ install {
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    archiveName "pcf8575-${versionName}-sources.jar"
+    archiveName "l298n-${versionName}-sources.jar"
 }
 
 artifacts {

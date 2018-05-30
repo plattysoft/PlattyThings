@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.plattysoft.adxl345.ADXL345;
+
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;

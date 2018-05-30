@@ -10,7 +10,7 @@ android {
 
 
     defaultConfig {
-        minSdkVersion 26
+        minSdkVersion 27
         targetSdkVersion 27
         versionCode 1
 
@@ -33,10 +33,10 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     compileOnly 'com.google.android.things:androidthings:+'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jre7:$kotlin_version"
+
 }
 
-def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/adxl345'
+def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/mpu6050'
 def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
 
 group = "com.plattysoft.things"
@@ -52,7 +52,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "PlattyThings"
-        name = "ADXL345"
+        name = "MPU6050"
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -71,12 +71,12 @@ install {
         pom {
             project {
                 packaging 'aar'
-                artifactId 'adxl345'
+                artifactId 'mpu6050'
                 version = versionName
                 groupId = group
                 // Add your description here
-                name 'ADXL345'
-                description = 'Accelerometer ADXL345 driver for Android Things'
+                name 'MPU6050'
+                description = 'Gyro / Accelerometer MPU6050 driver for Android Things'
                 url siteUrl
 
                 // Set your license
@@ -106,7 +106,7 @@ install {
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    archiveName "adxl345-${versionName}-sources.jar"
+    archiveName "mpu6050-${versionName}-sources.jar"
 }
 
 artifacts {

@@ -1,12 +1,13 @@
 // I2C driver for HMC5883L 3-axis digital compass
 // Datasheet: https://cdn-shop.adafruit.com/datasheets/HMC5883L_3-Axis_Digital_Compass_IC.pdf
 
-package com.plattysoft.hmc5883l_test;
+package com.plattysoft.hmc5883l;
 
 import android.support.annotation.IntDef;
 import android.util.Log;
 
 import com.google.android.things.pio.I2cDevice;
+import com.google.android.things.pio.PeripheralManager;
 
 import java.io.IOException;
 import java.lang.annotation.Retention;
@@ -126,7 +127,7 @@ public class Hmc5883l implements AutoCloseable {
 
     public Hmc5883l(String busName, int slaveAddress) throws IOException {
         try {
-            mI2cDevice = new PeripheralManagerService().openI2cDevice(busName, slaveAddress);
+            mI2cDevice = PeripheralManager.getInstance().openI2cDevice(busName, slaveAddress);
         } catch (IOException e) {
             try {
                 close();

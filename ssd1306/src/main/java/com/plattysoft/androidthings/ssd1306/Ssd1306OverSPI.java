@@ -161,7 +161,7 @@ class Ssd1306OverSPI extends Ssd1306 implements Closeable {
         mSpiDevice.setMode(SpiDevice.MODE0);
         mSpiDevice.setFrequency(10000000);
         mSpiDevice.setBitsPerWord(8);
-        mSpiDevice.setBitJustification(BIT_JUSTIFICATION_LSB_FIRST); // TODO: Try it and commit
+//        mSpiDevice.setBitJustification(BIT_JUSTIFICATION_LSB_FIRST); // TODO: Try it and commit
 
         mDc.setDirection(Gpio.DIRECTION_OUT_INITIALLY_HIGH);
         mDc.setActiveType(Gpio.ACTIVE_LOW);

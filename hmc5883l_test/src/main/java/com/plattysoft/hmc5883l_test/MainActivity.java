@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.plattysoft.hmc5883l.Hmc5883l;
+
 import java.io.IOException;
 
+import static com.plattysoft.hmc5883l.Hmc5883l.GAIN_1090;
 import static com.plattysoft.hmc5883l_test.Hmc5883l.GAIN_1090;
 
 public class MainActivity extends Activity {
