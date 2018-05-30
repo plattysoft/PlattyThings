@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '0.8.1'
+def versionName = '0.8'
 
 android {
     compileSdkVersion 27
@@ -26,33 +26,42 @@ android {
 
 def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/pcf8591'
 def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
-group = "com.plattysoft.things"
+def artifact = "pcf8591"
+def group = "com.plattysoft.things"
 version = versionName
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
     compileOnly 'com.google.android.things:androidthings:+'
 
-    testCompile 'junit:junit:4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    testImplementation 'junit:junit:4.12'
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
 
+task sourcesJar(type: Jar) {
+    from android.sourceSets.main.java.srcDirs
+    classifier = 'sources'
+    archiveName "pcf8591-${versionName}-sources.jar"
+}
+
 bintray {
+
     user = properties.getProperty("bintray.user")
     key = properties.getProperty("bintray.apikey")
 
+//    publications = ['Production']
     configurations = ['archives']
     pkg {
         repo = "PlattyThings"
-        name = "PCF8591"
+        name = artifact
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -71,11 +80,11 @@ install {
         pom {
             project {
                 packaging 'aar'
-                artifactId 'pcf8591'
+                artifactId artifact
                 version = versionName
                 groupId = group
                 // Add your description here
-                name 'pcf8591'
+                name artifact
                 description = 'ADC PCF8591 driver for Android Things'
                 url siteUrl
 
@@ -103,15 +112,34 @@ install {
     }
 }
 
-task sourcesJar(type: Jar) {
-    from android.sourceSets.main.java.srcDirs
-    classifier = 'sources'
-    archiveName "pcf8591-${versionName}-sources.jar"
+task createPom {
+    apply plugin: 'maven'
+    description "Generates pom.xml"
+    pom {
+        project {
+            groupId group
+            artifactId artifact
+            version versionName
+            packaging 'aar'
+        }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+
+        configurations.compile.allDependencies.each { dependency ->
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dependency.group)
+            dependencyNode.appendNode('artifactId', dependency.name)
+            dependencyNode.appendNode('version', dependency.version)
+        }
+    }.writeTo("$buildDir/poms/pcf8591-${versionName}.pom")
 }
 
 artifacts {
     archives sourcesJar
 }
+
 repositories {
     mavenCentral()
 }
+
+bintrayUpload.dependsOn(assemble, sourcesJar, createPom)

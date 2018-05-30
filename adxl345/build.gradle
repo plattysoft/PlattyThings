@@ -3,11 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.0'
+def versionName = '1.0.1'
 
 android {
     compileSdkVersion 27
-
 
     defaultConfig {
         minSdkVersion 26
@@ -15,7 +14,6 @@ android {
         versionCode 1
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -56,14 +54,16 @@ bintray {
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
-        dryRun = false
-        publish = true
+        dryRun = true
+        publish = false
         version {
             name = versionName //Bintray logical version name
             vcsTag = versionName
         }
     }
 }
+
+//bintrayUpload.dependsOn(assemble, sourcesJar, install)
 
 install {
     repositories.mavenInstaller {
@@ -109,9 +109,13 @@ task sourcesJar(type: Jar) {
     archiveName "adxl345-${versionName}-sources.jar"
 }
 
+task classesJar(type: Jar) {
+    //from android.sourceSets.main.java
+    from 'build/intermediates/classes/release/'
+    archiveName "adxl345-${versionName}.jar"
+}
+
 artifacts {
     archives sourcesJar
-}
-repositories {
-    mavenCentral()
+    archives classesJar
 }
