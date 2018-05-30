@@ -6,12 +6,11 @@ apply plugin: 'com.jfrog.bintray'
 def versionName = '0.8.1'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion "26.0.2"
+    compileSdkVersion 27
 
     defaultConfig {
-        minSdkVersion 24
-        targetSdkVersion 26
+        minSdkVersion 27
+        targetSdkVersion 27
         versionCode 1
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
