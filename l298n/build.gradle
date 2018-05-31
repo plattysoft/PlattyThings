@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '0.8.1'
+def versionName = '0.1.0'
 
 android {
     compileSdkVersion 26
@@ -39,8 +39,10 @@ dependencies {
 
 def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/l298n'
 def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
-group = "com.plattysoft.things"
+def groupPackageId = "com.plattysoft.things"
+group = groupPackageId
 version = versionName
+def artifact = "l298n"
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
@@ -65,53 +67,59 @@ bintray {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                artifactId 'l298n'
-                version = versionName
-                groupId = group
-                // Add your description here
-                name 'l298n'
-                description = 'GPIO Extension PCF8575 driver for Android Things'
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'plattysoft'
-                        name 'Platty Soft'
-                        email 'raul@plattysoft.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
+task createPom {
+    apply plugin: 'maven'
+    description "Generates pom.xml"
+    pom {
+        project {
+            packaging 'aar'
+            artifactId artifact
+            version = versionName
+            groupId = groupPackageId
+            name artifact.toUpperCase()
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                 }
             }
+            developers {
+                developer {
+                    id 'plattysoft'
+                    name 'Platty Soft'
+                    email 'raul@plattysoft.com'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
         }
-    }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+
+        configurations.compile.allDependencies.each { dependency ->
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dependency.group)
+            dependencyNode.appendNode('artifactId', dependency.name)
+            dependencyNode.appendNode('version', dependency.version)
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml")
 }
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    archiveName "l298n-${versionName}-sources.jar"
+    archiveName "${artifact}-${versionName}-sources.jar"
 }
 
 artifacts {
     archives sourcesJar
 }
+
 repositories {
     mavenCentral()
 }
+
+bintrayUpload.dependsOn(assemble, sourcesJar, createPom)
