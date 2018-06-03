@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.0'
+def versionName = '1.0.1'
 
 android {
     compileSdkVersion 27
@@ -36,10 +36,13 @@ dependencies {
 
 }
 
-def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/mpu6050'
-def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
+def artifact = "mpu6050"
 
-group = "com.plattysoft.things"
+def siteUrl = 'https://github.com/plattysoft/PlattyThings/tree/master/'+artifact
+def gitUrl = 'https://github.com/plattysoft/PlattyThings.git'
+def groupPackageId = "com.plattysoft.things"
+
+group = groupPackageId
 version = versionName
 
 Properties properties = new Properties()
@@ -52,7 +55,7 @@ bintray {
     configurations = ['archives']
     pkg {
         repo = "PlattyThings"
-        name = "MPU6050"
+        name = artifact.toUpperCase()
         websiteUrl = siteUrl
         vcsUrl = gitUrl
         licenses = ["Apache-2.0"]
@@ -65,53 +68,59 @@ bintray {
     }
 }
 
-install {
-    repositories.mavenInstaller {
-        // This generates POM.xml with proper parameters
-        pom {
-            project {
-                packaging 'aar'
-                artifactId 'mpu6050'
-                version = versionName
-                groupId = group
-                // Add your description here
-                name 'MPU6050'
-                description = 'Gyro / Accelerometer MPU6050 driver for Android Things'
-                url siteUrl
-
-                // Set your license
-                licenses {
-                    license {
-                        name 'The Apache Software License, Version 2.0'
-                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                    }
-                }
-                developers {
-                    developer {
-                        id 'plattysoft'
-                        name 'Platty Soft'
-                        email 'raul@plattysoft.com'
-                    }
-                }
-                scm {
-                    connection gitUrl
-                    developerConnection gitUrl
-                    url siteUrl
+task createPom {
+    apply plugin: 'maven'
+    description "Generates pom.xml"
+    pom {
+        project {
+            packaging 'aar'
+            artifactId artifact
+            version = versionName
+            groupId = groupPackageId
+            name artifact.toUpperCase()
+            licenses {
+                license {
+                    name 'The Apache Software License, Version 2.0'
+                    url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
                 }
             }
+            developers {
+                developer {
+                    id 'plattysoft'
+                    name 'Platty Soft'
+                    email 'raul@plattysoft.com'
+                }
+            }
+            scm {
+                connection gitUrl
+                developerConnection gitUrl
+                url siteUrl
+            }
         }
-    }
+    }.withXml {
+        def dependenciesNode = asNode().appendNode('dependencies')
+
+        configurations.compile.allDependencies.each { dependency ->
+            def dependencyNode = dependenciesNode.appendNode('dependency')
+            dependencyNode.appendNode('groupId', dependency.group)
+            dependencyNode.appendNode('artifactId', dependency.name)
+            dependencyNode.appendNode('version', dependency.version)
+        }
+    }.writeTo("$buildDir/poms/pom-default.xml")
 }
 
 task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
-    archiveName "mpu6050-${versionName}-sources.jar"
+    archiveName "${artifact}-${versionName}-sources.jar"
 }
 
 artifacts {
     archives sourcesJar
 }
+
 repositories {
     mavenCentral()
 }
+
+bintrayUpload.dependsOn(assemble, sourcesJar, createPom)
