@@ -182,24 +182,19 @@ class Ssd1306OverSPI extends Ssd1306 implements Closeable {
      * Draw pixel in SSD1306
      * @param x
      * @param y
-     * @param color WHITE | BLACK | INVERSE
+     * @param on boolean
      */
-    public void setPixel(int x, int y, ColorCode color)  {
+    public void setPixel(int x, int y, boolean on)  {
         if (x < 0 || y < 0 || x >= mLedWidth || y >= mLedHeight) {
             // Ignore the out of bound at this point
             return;
         }
-        switch (color) {
-            case WHITE :
-                mBuffer[DATA_OFFSET + x + ((y / 8) * mLedWidth)] |= (1 << y % 8);
-                break;
-            case BLACK:
-                mBuffer[DATA_OFFSET + x + ((y / 8) * mLedWidth)] &= ~(1 << y % 8);
-                break;
-            case INVERSE:
-                mBuffer[DATA_OFFSET + x + ((y / 8) * mLedWidth)] ^= (1 << y % 8);
-                break;
-        }
+       if (on) {
+           mBuffer[DATA_OFFSET + x + ((y / 8) * mLedWidth)] |= (1 << y % 8);
+       }
+       else {
+           mBuffer[DATA_OFFSET + x + ((y / 8) * mLedWidth)] &= ~(1 << y % 8);
+       }
     }
 
     /**

@@ -31,7 +31,7 @@ public class MainActivity extends Activity {
     private void useDisplay() throws IOException {
         for (int i=0; i<mScreen.getLcdWidth(); i++) {
             for (int j=0; j<mScreen.getLcdHeight(); j++) {
-                mScreen.setPixel(i, j, ((i <8 && j<8)||(i%8==0 ||j%8==0)) ? Ssd1306.ColorCode.BLACK : Ssd1306.ColorCode.WHITE);
+                mScreen.setPixel(i, j, ((i <8 && j<8)||(i%8==0 ||j%8==0)));
             }
         }
 //        mScreen.drawString(0,0,"Hello SDD1306", null);
@@ -89,12 +89,7 @@ public class MainActivity extends Activity {
                 for (int k = 0; k < 8; k++) {
                     if ((k + y < height) && (bytePos < bmpByteSize)) {
                         int pixel = bmp.getPixel(x, y + k);
-                        if (pixel != -1) { // Only draw white pixels
-                            mScreen.setPixel(x, y + k, Ssd1306.ColorCode.WHITE);
-                        }
-                        else {
-                            mScreen.setPixel(x, y + k, Ssd1306.ColorCode.BLACK);
-                        }
+                        mScreen.setPixel(x, y + k, pixel != -1);
                     }
                 }
             }

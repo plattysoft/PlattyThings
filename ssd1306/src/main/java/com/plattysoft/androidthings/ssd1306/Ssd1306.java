@@ -11,10 +11,6 @@ import java.io.IOException;
 
 public abstract class Ssd1306 {
 
-    public enum ColorCode  {
-        WHITE, BLACK, INVERSE
-    };
-
     protected Ssd1306() {
         // This class is used as a factory, not intended to be constructed
     }
@@ -32,7 +28,7 @@ public abstract class Ssd1306 {
 
     public abstract int getLcdHeight();
 
-    public abstract void setPixel(int i, int j, ColorCode colorCode);
+    public abstract void setPixel(int i, int j, boolean on);
 
     public abstract void show();
 

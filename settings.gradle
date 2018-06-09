@@ -1,1 +1,1 @@
-include ':ssd1306_sample', ':ssd1306', ':adxl345_test', ':hmc5883l_test', ':pcf8591', ':pcf8591_sample', ':ledmatrix_test', ':l298n', ':uln2003_sample', ':uln2003', ':pcf8575_sample', ':pcf8575', ':adxl345', ':hmc5883l', ':mpu6050'
+include ':ssd1306_sample', ':ssd1306', ':adxl345_test', ':hmc5883l_test', ':pcf8591', ':pcf8591_sample', ':ledmatrix_test', ':l298n', ':uln2003_sample', ':uln2003', ':pcf8575_sample', ':pcf8575', ':adxl345', ':hmc5883l', ':mpu6050', ':mpu6050_sample', ':pca9685'
