@@ -1,6 +1,5 @@
 package com.plattysoft.pca9685;
 
-import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.google.android.things.pio.I2cDevice;
@@ -82,6 +81,11 @@ public class PCA9685 implements Closeable{
   public Pwm openPwm(int channel) {
     return new PwmUnderPca9685(channel, this);
   }
+
+  public ServoUnderPca9685 openServo(int channel) throws IOException {
+    return new ServoUnderPca9685(openPwm(channel));
+  }
+
 
   public void setPwmFreq(int freqHz) throws IOException {
     try {
