@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'com.github.dcendents.android-maven'
 
-def versionName = '0.8.2'
+def versionName = '0.8.3'
 def groupPackageId = "com.plattysoft.things"
 
 android {
@@ -51,6 +51,12 @@ task sourcesJar(type: Jar) {
     from android.sourceSets.main.java.srcDirs
     classifier = 'sources'
     archiveName "pcf8591-${versionName}-sources.jar"
+}
+
+task classesJar(type: Jar) {
+    //from android.sourceSets.main.java
+    from 'build/intermediates/classes/release/'
+    archiveName "pcf8591-${versionName}.jar"
 }
 
 bintray {
@@ -116,10 +122,11 @@ task createPom {
 
 artifacts {
     archives sourcesJar
+    archives classesJar
 }
 
 repositories {
     mavenCentral()
 }
 
-bintrayUpload.dependsOn(assemble, sourcesJar, createPom)
+bintrayUpload.dependsOn(assemble, sourcesJar, classesJar, createPom)

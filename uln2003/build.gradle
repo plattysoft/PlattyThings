@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.0'
+def versionName = '1.0.1'
 
 android {
     compileSdkVersion 27
@@ -115,8 +115,15 @@ task sourcesJar(type: Jar) {
     archiveName "${artifact}-${versionName}-sources.jar"
 }
 
+task classesJar(type: Jar) {
+    //from android.sourceSets.main.java
+    from 'build/intermediates/classes/release/'
+    archiveName "${artifact}-${versionName}.jar"
+}
+
 artifacts {
     archives sourcesJar
+    archives classesJar
 }
 
 repositories {

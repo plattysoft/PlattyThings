@@ -2,6 +2,7 @@ package com.plattysoft.iotdisplaysample;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
@@ -9,6 +10,11 @@ import java.io.IOException;
 
 import android.util.Log;
 
+import com.github.kittinunf.fuel.Fuel;
+import com.github.kittinunf.fuel.core.FuelError;
+import com.github.kittinunf.fuel.core.Handler;
+import com.github.kittinunf.fuel.core.Request;
+import com.github.kittinunf.fuel.core.Response;
 import com.plattysoft.androidthings.ssd1306.Ssd1306;
 
 public class MainActivity extends Activity {
@@ -29,16 +35,21 @@ public class MainActivity extends Activity {
     }
 
     private void useDisplay() throws IOException {
-        for (int i=0; i<mScreen.getLcdWidth(); i++) {
-            for (int j=0; j<mScreen.getLcdHeight(); j++) {
-                mScreen.setPixel(i, j, ((i <8 && j<8)||(i%8==0 ||j%8==0)));
+        Fuel.get("https://chart.googleapis.com/chart?chs=128x64&cht=qr&chl=Hello%20world&choe=UTF-8&chld=M|1").responseString(new Handler<String>() {
+            @Override
+            public void failure(Request request, Response response, FuelError error) {
+                //do something when it is failure
             }
-        }
-//        mScreen.drawString(0,0,"Hello SDD1306", null);
-        Bitmap plattyBitmap = ((BitmapDrawable)getDrawable(R.drawable.platty)).getBitmap();
-        setBmpData(mScreen, plattyBitmap);
-        mScreen.show();
-//        mScreen.startScrolling();
+
+            @Override
+            public void success(Request request, Response response, String data) {
+                //do something when it is successful
+                byte[] dataBytes = response.getData();
+                Bitmap qrcode = BitmapFactory.decodeByteArray(dataBytes, 0, dataBytes.length);
+                setBmpData(mScreen, qrcode);
+                mScreen.show();
+            }
+        });
     }
 
 
@@ -89,7 +100,7 @@ public class MainActivity extends Activity {
                 for (int k = 0; k < 8; k++) {
                     if ((k + y < height) && (bytePos < bmpByteSize)) {
                         int pixel = bmp.getPixel(x, y + k);
-                        mScreen.setPixel(x, y + k, pixel != -1);
+                        mScreen.setPixel(x, y + k, pixel == -1);
                     }
                 }
             }

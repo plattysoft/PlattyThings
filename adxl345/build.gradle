@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '1.0.2'
+def versionName = '1.0.3'
 
 android {
     compileSdkVersion 27
@@ -112,12 +112,19 @@ task sourcesJar(type: Jar) {
     archiveName "adxl345-${versionName}-sources.jar"
 }
 
+task classesJar(type: Jar) {
+    //from android.sourceSets.main.java
+    from 'build/intermediates/classes/release/'
+    archiveName "adxl345-${versionName}.jar"
+}
+
 artifacts {
     archives sourcesJar
+    archives classesJar
 }
 
 repositories {
     mavenCentral()
 }
 
-bintrayUpload.dependsOn(assemble, sourcesJar, createPom)
+bintrayUpload.dependsOn(assemble, sourcesJar, classesJar, createPom)

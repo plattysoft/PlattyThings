@@ -3,7 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.github.dcendents.android-maven'
 apply plugin: 'com.jfrog.bintray'
 
-def versionName = '0.1.0'
+def versionName = '1.0.1'
 
 android {
     compileSdkVersion 26
@@ -33,7 +33,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     compileOnly 'com.google.android.things:androidthings:+'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
@@ -114,8 +114,15 @@ task sourcesJar(type: Jar) {
     archiveName "${artifact}-${versionName}-sources.jar"
 }
 
+task classesJar(type: Jar) {
+    //from android.sourceSets.main.java
+    from 'build/intermediates/classes/release/'
+    archiveName "${artifact}-${versionName}.jar"
+}
+
 artifacts {
     archives sourcesJar
+    archives classesJar
 }
 
 repositories {
