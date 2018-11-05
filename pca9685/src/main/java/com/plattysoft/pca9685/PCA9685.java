@@ -151,8 +151,8 @@ public class PCA9685 implements Closeable{
     }
   }
 
-  public void setPwmDutyCycle(int channel, int dutyCycle) throws IOException {
-    int duty = (dutyCycle * 4092 / 100);
+  public void setPwmDutyCycle(int channel, double dutyCycle) throws IOException {
+    int duty = (int) (dutyCycle * 4092 / 100);
     // On means when it turns on, off means when it turns off as part of the period, based on 4098 steps
     setPwm(channel, 0, duty);
   }
