@@ -27,12 +27,12 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
-    compile 'io.lockswitch.android.things.contrib:contrib-driver-sparkfun:0.2'
-    compile 'com.github.kittinunf.fuel:fuel:+' //for JVM
-    compile 'com.github.kittinunf.fuel:fuel-android:+' //for Android
+    implementation 'io.lockswitch.android.things.contrib:contrib-driver-sparkfun:0.2'
+    implementation 'com.github.kittinunf.fuel:fuel:+' //for JVM
+    implementation 'com.github.kittinunf.fuel:fuel-android:+' //for Android
     compileOnly 'com.google.android.things:androidthings:+'
 
-    compile project(path: ':ssd1306')
+    implementation project(path: ':ssd1306')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
